@@ -1,0 +1,47 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:4.2.5
+    container_name: $DB_HOST
+    ports:
+      - $DB_PORT:$DB_PORT
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
+      MONGO_INITDB_DATABASE: resumium
+      MONGO_USERNAME: admin
+      MONGO_PASSWORD: secret
+    volumes:
+      - ./data:/data/db
+      - ./mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh:ro
+  cache:
+    image: redis:alpine
+    container_name: cache
+    ports:
+      - $REDIS_PORT:$REDIS_PORT
+    command: ['--requirepass "secret"']
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - ./server:/usr/app
+      - /usr/app/node_modules
+    environment:
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      DB_HOST: $DB_HOST
+      DB_PORT: $DB_PORT
+      DB_NAME: $DB_NAME
+      APP_PORT: $APP_PORT
+    ports:
+      - $APP_PORT:$APP_PORT
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - ./client:/usr/app
+      - /usr/app/node_modules
+    ports:
+      - $PORT:$PORT
