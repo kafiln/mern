@@ -9,6 +9,7 @@ router.use(
 	'/',
 	authenticated,
 	asyncHandler(async (req: Request, res: Response) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const userId = (req.session as any).userId;
 		const user = await UserModel.findById(userId);
 		res.json(user);

@@ -1,5 +1,4 @@
 export * from './auth';
-export * from './validation';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 
 export const asyncHandler = (handler: RequestHandler) => (

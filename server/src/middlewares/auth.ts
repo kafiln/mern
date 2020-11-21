@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { Authorized } from '../errors';
+import { ALREADY_LOGGED_IN, NOT_AUTHENTICATED } from '../constants';
+import { UnAuthorized } from '../errors';
 import { isLoggedIn } from '../helpers';
 
 export const guest = (
@@ -8,7 +9,7 @@ export const guest = (
 	next: NextFunction,
 ): void => {
 	if (isLoggedIn(req)) {
-		return next(new Authorized('Already logged in'));
+		return next(new UnAuthorized(ALREADY_LOGGED_IN));
 	}
 	next();
 };
@@ -19,7 +20,7 @@ export const authenticated = (
 	next: NextFunction,
 ): void => {
 	if (!isLoggedIn(req)) {
-		return next(new Authorized('You are not authenticated'));
+		return next(new UnAuthorized(NOT_AUTHENTICATED));
 	}
 	next();
 };
